@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://kit.fontawesome.com/8d5ad52456.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <style>
+        .btn-group{
+            background-color: rgb(60, 58, 58);
+            width: 750px;
+        }
+        .btn{
+            width: 250px;
+        }
+        .dashboard{
+            width: 750px;
+            height: 500px;
+            background-color: rgb(80, 68, 68);
+        }
+        .tblContainer{
+            width: 680px;
+        }
+        .win{
+            display:none;
+        }
+        .win2{
+            display:none;
+        }
+        .win3{
+            display:none;
+        }
+        .fa-times{
+            float: right;
+            font-size: 30px;
+            color: red;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .form{
+            width:650px;
+            height:350px;
+        }
+        #remark{
+            color:white;
+            width:200px;
+            height:50px;
+        }
+        #remark2{
+            color:white;
+            width:200px;
+            height:50px;
+        }
+        #remark3{
+            color:white;
+            width:200px;
+            height:50px;
+        }
+        .healer{
+            width:0px;
+            height:0px;
+        }
+    </style>
+    <script>
+        $(document).ready(function(){
+            $("#loginReset").click(function(){
+                $("#loginId").val("");
+                $("#loginPass").val("");
+                $("#remark2").html("");
+                $("#login").prop( "disabled",true);
+            });
+
+            $("#loginId").keyup(function(){
+                if($("#loginId").val().length > 0 && $("#loginPass").val().length > 0){
+                    $("#login").prop("disabled",false);
+                } else{
+                    $("#login").prop( "disabled",true);
+                }
+            });
+            $("#loginPass").keyup(function(){
+                if($("#loginId").val().length > 0 && $("#loginPass").val().length > 0){
+                    $("#login").prop("disabled",false);
+                } else{
+                    $("#login").prop("disabled",true);
+                }
+            });
+
+            $(".openRegister").click(function(){
+                $(".win").slideDown();
+                $(".win2").slideUp();
+                $(".win3").slideUp();
+            });
+            $(".openLogin").click(function(){
+                $(".win2").slideDown();
+                $(".win").slideUp();
+                $(".win3").slideUp();
+            });
+            $(".openList").click(function(){
+                $(".win3").slideDown();
+                $(".win2").slideUp();
+                $(".win").slideUp();
+            })
+            $(".fas").click(function(){
+                $(".win").slideUp();
+                $(".win2").slideUp();
+                $(".win3").slideUp();
+            });
+
+            $("#register").click(function(){
+            const z = {
+                "id": $(".lid").val(),
+                "age": $(".lage").val(),
+                "pass": $(".lpass").val()
+            };
+            console.log(z);
+            console.log($(".lid").val());
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json",
+                    url: "/saveInfo",
+                    data: JSON.stringify(z),
+                    dataType: 'json',
+
+                    success: function (data){
+                        $("#remark").html(data.msg);
+                    }
+                });
+            });
+
+            $("#login").click(function(){
+
+                const z1 = {
+                    "id" : $(".loginId").val(),
+                    "pass" : $(".loginPass").val()
+                }
+                console.log(z1);
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json",
+                    url: "/login",
+                    data: JSON.stringify(z1),
+                    dataType: 'json',
+
+                    success: function (data){
+                        console.log("hello");
+                        console.log(data.msg + data.statusCode);
+                        $("#remark2").html(data.msg);
+                    }
+                });
+            })
+
+            $("#fetch").click(function(){
+                $.ajax({
+                    type: "GET",
+                    contentType: "application/json",
+                    url: "/fetchAllRecords",
+
+                    success: function (data){
+                        $.each(data, function(key,value){
+                            console.log(value.id + value.age);
+                            $("tbody").append("<tr><th>"+ value.id +"</th><td>"+ value.age +"</td></tr>");
+                        });
+                    }
+                });
+            })
+        });
+    </script>
+</head>
+<body>
+<center>
+    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+        <input type="radio" class="btn-check openRegister" name="btnradio" id="btnradio1"/>
+        <label class="btn btn-outline-info" for="btnradio1">Register</label>
+
+        <input type="radio" class="btn-check openLogin" name="btnradio" id="btnradio2"/>
+        <label class="btn btn-outline-light" for="btnradio2">Login</label>
+
+        <input type="radio" class="btn-check openList" name="btnradio" id="btnradio3"/>
+        <label class="btn btn-outline-warning" for="btnradio3">List of users</label>
+    </div>
+    <div class="dashboard">
+        <div class="win">
+            <i class="fas fa-times"></i>
+            <br><br><br>
+            <div class="form">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control lid" id="floatingInput" placeholder="id">
+                    <label for="floatingInput">Id</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control lage" placeholder="age">
+                    <label for="floatingInput">Age</label>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control lpass" id="floatingPassword" placeholder="Password">
+                    <label for="floatingPassword">Password</label>
+                </div><br>
+                <button type="button" class="btn btn-info btn-lg" disabled id="register">Register</button>
+                <div id="remark"></div>
+            </div>
+
+        </div>
+        <div class="win2">
+            <i class="fas fa-times"></i>
+            <br><br><br>
+            <div class="form">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control loginId" id="loginId" placeholder="id">
+                    <label for="floatingInput">Id</label>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control loginPass" id="loginPass" placeholder="Password">
+                    <label for="floatingPassword">Password</label>
+                </div><br>
+                <button type="button" class="btn btn-dark btn-lg" disabled id="login">Login</button>
+                <button type="button" class="btn btn-dark btn-lg" id="loginReset">Reset</button>
+                <div id="remark2"></div>
+            </div>
+        </div>
+        <div class="win3">
+            <i class="fas fa-times"></i>
+            <br><br>
+            <button type="button" class="btn btn-warning btn-lg" id="fetch">Fetch all records</button>
+            <br><br>
+            <div class="tblContainer">
+                <table class="table table-dark table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">User Id</th>
+                        <th scope="col">Age</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</center>
+</body>
+</html>
